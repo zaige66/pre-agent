@@ -164,9 +164,19 @@ public class TimerClassVisitor extends ClassVisitor {
                 // 将栈顶引用型数值存入第几个本地变量
                 mv.visitVarInsn(ASTORE, arrIndex);
 
+
                 // 打印方法参数值
                 this.visitVarInsn(ALOAD, arrIndex);
                 this.visitMethodInsn(Opcodes.INVOKESTATIC, "com/ayg/tools/exec/timer/ExecTime", "printSql", "([Ljava/lang/Object;)V", false);
+
+                // 读入this，执行本类的其他方法
+                this.visitVarInsn(ALOAD,0);
+                this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "com/ayg/tools/Entity", "inject", "()Ljava/lang/String;", false);
+
+                arrIndex = arrIndex + 1;
+                this.visitVarInsn(ASTORE, arrIndex);
+                this.visitVarInsn(ALOAD, arrIndex);
+                this.visitMethodInsn(Opcodes.INVOKESTATIC, "com/ayg/tools/exec/timer/ExecTime", "printRet", "(Ljava/lang/String;)V", false);
 
                 // 记录方法开始的时间戳
                 this.visitLdcInsn(key);

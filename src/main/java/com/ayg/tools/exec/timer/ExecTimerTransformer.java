@@ -56,7 +56,7 @@ public class ExecTimerTransformer implements ClassFileTransformer {
             //第四步：返回修改后的字节码流
             byte[] bytes = writer.toByteArray();
             try {
-                if (className.contains("Test")) {
+                if (className.contains("Entity")) {
                     FileOutputStream fileOutputStream = new FileOutputStream("/Users/kangxuan/self_workspace/exec-timer/target/test.class");
                     fileOutputStream.write(bytes);
                     fileOutputStream.flush();

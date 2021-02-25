@@ -14,11 +14,25 @@ public class Entity {
         this.name = name;
     }
 
-    public static void say(String say,double a,boolean c,Entity d,long f,int g){
+    public void say(String say,double a,boolean c,Entity d,long f,int g){
         System.out.println("我是静态方法："+ say);
     }
 
     public void hi(String say,double a,boolean c,Entity d,long f,int g){
         System.out.println("我是实例方法："+say);
     }
+
+    public void hi(){
+        System.out.println("我没有参数");
+    };
+
+    public String inject(){
+        System.out.println("inject");
+        return "i'm inject return";
+    };
+
+    public static void say(String str){
+        System.out.println(str);
+    }
+
 }

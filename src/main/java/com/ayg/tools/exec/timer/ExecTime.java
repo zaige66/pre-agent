@@ -58,13 +58,18 @@ public class ExecTime {
     }
 
 
+    public static void printRet(String ret){
+        System.out.println(ret);
+    }
+
+
     /**
      * 打印sql信息
      * @param obj
      */
     public static void printSql(Object[] obj){
         try {
-            Object o = obj[0];
+            /*Object o = obj[0];
             Object target = AopTargetUtil.getTarget(o);
             System.out.println(target);
             com.mysql.jdbc.PreparedStatement statement = (PreparedStatement) target;
@@ -72,7 +77,7 @@ public class ExecTime {
 
             System.out.println("------------------------------------------");
             System.out.println();
-            System.out.println("      " + statement.asSql());
+            System.out.println("      " + statement.asSql());*/
         } catch (Exception e) {
             System.err.println(e.getMessage());
             e.printStackTrace();

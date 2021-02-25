@@ -43,7 +43,7 @@ public class ProfilingFilter {
         if (null == className) return false;
 
         if (null != className){
-            return className.startsWith("org/apache/ibatis/executor/statement/PreparedStatementHandler");
+            return className.startsWith("com/ayg/tools/Entity");
         }
 
         for (String prefix : exceptPackagePrefix) {
