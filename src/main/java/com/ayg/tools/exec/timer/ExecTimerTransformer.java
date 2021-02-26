@@ -1,8 +1,6 @@
 package com.ayg.tools.exec.timer;
 
-import com.ayg.tools.exec.timer.cmds.ExecParam;
-import com.ayg.tools.exec.timer.cmds.IExeCmd;
-import com.ayg.tools.exec.timer.cmds.MethodExeCmd;
+import com.ayg.tools.exec.timer.cmds.Commond;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
@@ -11,6 +9,10 @@ import org.slf4j.LoggerFactory;
 import java.io.FileOutputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Description:方法执行时长字节码转换器
@@ -19,14 +21,16 @@ import java.security.ProtectionDomain;
  */
 public class ExecTimerTransformer implements ClassFileTransformer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodExeCmd.class);
 
+    private List<Commond> commondList;
+    private Map<String,Commond> targetClassListMap = new HashMap<>();
 
-    private IExeCmd exeCmd;
-
-    public ExecTimerTransformer(IExeCmd exeCmd) {
+    public ExecTimerTransformer(List<Commond> commondList ) {
         super();
-        this.exeCmd = exeCmd;
+        this.commondList = commondList;
+        for (Commond commond : commondList) {
+            targetClassListMap.put(commond.getClassName(),commond);
+        }
     }
 
 
@@ -42,7 +46,9 @@ public class ExecTimerTransformer implements ClassFileTransformer {
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
 
-        if (!ProfilingFilter.isNotNeedInject(className)) {
+        // 如果不是需要修改的类
+        Commond commond = findNeedInject(className);
+        if (commond == null){
             return classfileBuffer;
         }
 
@@ -52,9 +58,11 @@ public class ExecTimerTransformer implements ClassFileTransformer {
             //第二步：创建操作字节流值对象，ClassWriter.COMPUTE_MAXS:表示自动计算栈大小
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
             //第三步：接受一个ClassVisitor子类进行字节码修改
-            reader.accept(new TimerClassVisitor(writer, className, exeCmd), ClassReader.EXPAND_FRAMES);
+            reader.accept(new TimerClassVisitor(writer, className, commond), ClassReader.EXPAND_FRAMES);
             //第四步：返回修改后的字节码流
             byte[] bytes = writer.toByteArray();
+
+            // 将修改后的字节码临时输出到文件。仅调试用
             try {
                 if (className.contains("Entity")) {
                     FileOutputStream fileOutputStream = new FileOutputStream("/Users/kangxuan/self_workspace/exec-timer/target/test.class");
@@ -67,9 +75,24 @@ public class ExecTimerTransformer implements ClassFileTransformer {
 
             return bytes;
         } catch (Throwable e) {
-            LOG.error("", e);
+            e.printStackTrace();
             throw e;
         }
+    }
+
+    private Commond findNeedInject(String className) {
+        // 代理类不再进行增强，只增强原始类
+        if (className.contains("$")){
+         return null;
+        }
+
+        Set<String> strings = targetClassListMap.keySet();
+        for (String string : strings) {
+            if (className.startsWith(string)){
+                return targetClassListMap.get(string);
+            }
+        }
+        return null;
     }
 
 

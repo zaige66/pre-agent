@@ -22,8 +22,9 @@ public class Entity {
         System.out.println("我是实例方法："+say);
     }
 
-    public void hi(){
+    public String hi(){
         System.out.println("我没有参数");
+        return "aaa";
     };
 
     public String inject(){

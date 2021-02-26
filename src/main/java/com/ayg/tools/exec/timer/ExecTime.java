@@ -1,6 +1,7 @@
 package com.ayg.tools.exec.timer;
 
 
+import com.alibaba.fastjson.JSON;
 import com.ayg.tools.Entity;
 import com.mysql.jdbc.PreparedStatement;
 import org.slf4j.Logger;
@@ -53,42 +54,36 @@ public class ExecTime {
      * 打印参数
      * @param obj
      */
-    public static void printVar(Object[] obj){
-        System.out.println(Arrays.toString(obj));
-    }
-
-
-    public static void printRet(String ret){
-        System.out.println(ret);
+    public static void printArgs(String className,String methodName,Object[] obj){
+        System.out.println("方法参数：" + className + "#" + methodName + " args：" + JSON.toJSONString(obj));
     }
 
 
     /**
-     * 打印sql信息
-     * @param obj
+     * 打印返回值
+     * @param ret
      */
-    public static void printSql(Object[] obj){
-        try {
-            /*Object o = obj[0];
-            Object target = AopTargetUtil.getTarget(o);
-            System.out.println(target);
-            com.mysql.jdbc.PreparedStatement statement = (PreparedStatement) target;
+    public static void printRet(Object ret){
+        System.out.println("方法返回值：" + JSON.toJSON(ret));
+    }
 
-
-            System.out.println("------------------------------------------");
-            System.out.println();
-            System.out.println("      " + statement.asSql());*/
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        System.out.println();
-            System.out.println("------------------------------------------");
-
+    /**
+     * 打印sql语句
+     * @param sql
+     */
+    public static void printJdbcSql(String sql){
+        System.out.println("---------------------------");
+        System.out.println("    " + sql.replace("\r","").replace("\n","").replace("\r\n",""));
+        System.out.println("---------------------------");
     }
 
 
+    /**
+     * 打印执行时间
+     * @param className
+     * @param methodName
+     * @param methodDesc
+     */
     public static void execTime(String className, String methodName, String methodDesc) {
         try {
             String key = className + methodName + methodDesc;
