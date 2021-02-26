@@ -135,6 +135,12 @@ public class TimerClassVisitor extends ClassVisitor {
         int parameterCount = tag.size();
         // 创建数组对象
         if (parameterCount >= 6) {
+            /**
+             * 当int取值 -1~5 时，JVM采用iconst指令将常量压入栈中。
+             *  当int取值 -128~127 时，JVM采用 bipush 指令将常量压入栈中。
+             * 这两个不可乱用
+             *
+             */
             // 将单字节的常量值(-128~127)推送至栈顶
             mv.visitVarInsn(BIPUSH, parameterCount);//初始化数组长度
         } else {
